@@ -6,7 +6,7 @@ from .models import User, Customer, Seller, Category, Product, Order, OrderItem,
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email", "password", "country", "city", "created_at"]
+        fields = ["id", "username", "email", "first_name", "last_name", "password", "country", "city", "created_at"]
         extra_kwargs = {
             "password": {"write_only": True},
             "created_at": {"read_only": True},
@@ -17,30 +17,14 @@ class UserSerializer(serializers.ModelSerializer):
         return user
     
 # ─── CUSTOMER & SELLER ───────────────────────────────────────────────────────
-
 class CustomerSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)          # nested: show full user info
-    user_id = serializers.PrimaryKeyRelatedField(  # writable: accept user id
-        queryset=User.objects.all(), source="user", write_only=True
-    )
-
     class Meta:
         model = Customer
-        fields = ["id", "user", "user_id", "phone"]
-
-
+        fields = ["id", "phone"]   # user is set in perform_create, not by the client
 class SellerSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    user_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source="user", write_only=True
-    )
-
     class Meta:
         model = Seller
-        fields = ["id", "user", "user_id", "seller_name", "address", "phone", "profile_image", "created_at"]
-        extra_kwargs = {"created_at": {"read_only": True}}
-
-
+        fields = ["id", "seller_name", "address", "phone", "profile_image"]
 # ─── CATALOGUE ───────────────────────────────────────────────────────────────
 
 class CategorySerializer(serializers.ModelSerializer):

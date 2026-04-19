@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     country = models.CharField(max_length=50, blank=True)
