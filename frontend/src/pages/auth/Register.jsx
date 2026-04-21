@@ -152,7 +152,7 @@ const Register = () => {
       }
 
       setSuccess("Account created! Redirecting…");
-      setTimeout(() => navigate("/dashboard"), 1500);
+      setTimeout(() => navigate("/home"), 1500);
     } catch (err) {
       setError(err.message);
     } finally {

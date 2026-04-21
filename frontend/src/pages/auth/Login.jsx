@@ -32,7 +32,7 @@ const Login = () => {
       localStorage.setItem('access',  data.access);
       localStorage.setItem('refresh', data.refresh);
 
-      navigate('/dashboard');   // ← adjust route as needed
+      navigate('/home');   // ← adjust route as needed
     } catch (err) {
       setError(err.message);
     } finally {
