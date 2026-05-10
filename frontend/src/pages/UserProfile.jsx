@@ -37,6 +37,11 @@ export default function UserProfile() {
         city: form.city,
         country: form.country,
         phone: form.phone || '',
+        username: form.username,
+        ...(form.password && form.new_password ? {
+          password: form.password,
+          new_password: form.new_password,
+        } : {})
       })
       setUser(res.data)
       setForm(res.data)
@@ -75,7 +80,7 @@ export default function UserProfile() {
             onClick={() => navigate(-1)}
             style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '13px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'Outfit, sans-serif' }}
           >
-            ← Back
+            Back
           </button>
 
           {/* Profile Header */}
@@ -128,7 +133,7 @@ export default function UserProfile() {
                   cursor: 'pointer', transition: 'all 0.2s',
                 }}
               >
-                {saving ? 'Saving...' : editing ? '✓ Save Changes' : '✏️ Edit Profile'}
+                {saving ? 'Saving...' : editing ? '✓ Save Changes' : 'Edit Profile'}
               </button>
             </div>
           </div>
@@ -136,15 +141,15 @@ export default function UserProfile() {
           {/* Stats */}
           <div className="stats-grid" style={{ marginBottom: '24px' }}>
             <div className="stat-card">
-              <div className="stat-label">📦 Total Orders</div>
+              <div className="stat-label">Total Orders</div>
               <div className="stat-value accent">{user.total_orders || 0}</div>
             </div>
             <div className="stat-card">
-              <div className="stat-label">💰 Total Spent</div>
+              <div className="stat-label">Total Spent</div>
               <div className="stat-value green">PKR {Number(user.total_spent || 0).toLocaleString()}</div>
             </div>
             <div className="stat-card">
-              <div className="stat-label">📅 Member Since</div>
+              <div className="stat-label">Member Since</div>
               <div className="stat-value blue" style={{ fontSize: '18px' }}>{memberSince}</div>
             </div>
           </div>
@@ -155,10 +160,9 @@ export default function UserProfile() {
             borderRadius: 'var(--radius-lg)', padding: '28px', marginBottom: '16px',
           }}>
             <div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ color: 'var(--accent)' }}>👤</span> Personal Information
+              Personal Information
             </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div className="responsive-grid-2col" style={{ gap: '16px', marginBottom: 0 }}>
               <div className="field-group">
                 <label>First Name</label>
                 {editing ? (
@@ -226,6 +230,39 @@ export default function UserProfile() {
                   <div className="profile-field-value">{user.country || '—'}</div>
                 )}
               </div>
+              <div className="field-group">
+                <label>Username</label>
+                {editing ? (
+                  <input
+                    value={form.username || ''}
+                    onChange={e => setForm(f => ({ ...f, username: e.target.value }))}
+                  />
+                ) : (
+                  <div className="profile-field-value">{user.username || '—'}</div>
+                )}
+              </div>
+              {editing && (
+                <>
+                  <div className="field-group">
+                    <label>Current Password</label>
+                    <input
+                      type="password"
+                      placeholder="Leave blank to keep current"
+                      value={form.password || ''}
+                      onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                    />
+                  </div>
+                  <div className="field-group">
+                    <label>New Password</label>
+                    <input
+                      type="password"
+                      placeholder="Enter new password"
+                      value={form.new_password || ''}
+                      onChange={e => setForm(f => ({ ...f, new_password: e.target.value }))}
+                    />
+                  </div>
+                </>
+              )}
             </div>
 
             {editing && (
@@ -253,14 +290,14 @@ export default function UserProfile() {
             borderRadius: 'var(--radius-lg)', padding: '28px',
           }}>
             <div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ color: 'var(--accent)' }}>⚡</span> Quick Links
+              Quick Links
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div className="responsive-grid-2col" style={{ gap: '10px', marginBottom: 0 }}>
               {[
-                { label: 'My Orders', icon: '📦', path: '/orders' },
-                { label: 'Shopping Cart', icon: '🛒', path: '/cart' },
-                { label: 'Browse Products', icon: '🏷️', path: '/' },
-                ...(user.is_seller ? [{ label: 'Seller Dashboard', icon: '📊', path: '/seller/dashboard' }] : []),
+                { label: 'My Orders', icon: '', path: '/orders' },
+                { label: 'Shopping Cart', icon: '', path: '/cart' },
+                { label: 'Browse Products', icon: '', path: '/' },
+                ...(user.is_seller ? [{ label: 'Seller Dashboard', icon: '', path: '/seller/dashboard' }] : []),
               ].map(link => (
                 <button
                   key={link.path}
@@ -277,7 +314,7 @@ export default function UserProfile() {
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(249,115,22,0.3)'; e.currentTarget.style.color = 'var(--text)' }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-soft)' }}
                 >
-                  <span style={{ fontSize: '18px' }}>{link.icon}</span>
+                  <span style={{ fontSize: '18px' }}></span>
                   {link.label}
                 </button>
               ))}
@@ -289,7 +326,7 @@ export default function UserProfile() {
 
       {toast && (
         <div className={`toast ${toast.type}`}>
-          {toast.type === 'success' ? '✅' : '❌'} {toast.message}
+          {toast.message}
         </div>
       )}
     </div>

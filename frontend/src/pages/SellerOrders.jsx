@@ -87,7 +87,7 @@ export default function SellerOrders() {
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
             <div>
-              <h1 style={{ fontSize: '24px', fontWeight: 700 }}>🧾 Customer Orders</h1>
+              <h1 style={{ fontSize: '24px', fontWeight: 700 }}>Customer Orders</h1>
               <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
                 {orders.length} total order{orders.length !== 1 ? 's' : ''}
               </div>
@@ -117,7 +117,7 @@ export default function SellerOrders() {
 
           {filtered.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-state-icon">🧾</div>
+              <div className="empty-state-icon"></div>
               <h3>No {filter !== 'ALL' ? filter.toLowerCase() : ''} orders</h3>
               <p>Orders will appear here when customers place them</p>
             </div>
@@ -218,7 +218,7 @@ export default function SellerOrders() {
 
       {toast && (
         <div className={`toast ${toast.type}`}>
-          {toast.type === 'success' ? '✅' : '❌'} {toast.message}
+          {toast.message}
         </div>
       )}
     </div>

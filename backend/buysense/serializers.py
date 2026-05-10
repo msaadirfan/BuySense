@@ -22,14 +22,20 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
-    phone = serializers.CharField(write_only=True, required=False)
+    phone        = serializers.CharField(write_only=True, required=False)
+    password     = serializers.CharField(write_only=True, required=False, min_length=8)
+    new_password = serializers.CharField(write_only=True, required=False, min_length=8)
 
     class Meta:
         model  = User
-        fields = ["first_name", "last_name", "email", "country", "city", "phone"]
+        fields = ["first_name", "last_name", "email", "country", "city",
+                  "phone", "username", "password", "new_password"]
 
     def update(self, instance, validated_data):
-        phone = validated_data.pop("phone", None)
+        phone        = validated_data.pop("phone", None)
+        password     = validated_data.pop("password", None)
+        new_password = validated_data.pop("new_password", None)
+
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -42,6 +48,15 @@ class UserUpdateSerializer(serializers.ModelSerializer):
                 customer.save()
             except Customer.DoesNotExist:
                 pass
+
+        # Update password — require current password to confirm
+        if new_password:
+            if not instance.check_password(password):
+                raise serializers.ValidationError(
+                    {"password": "Current password is incorrect."}
+                )
+            instance.set_password(new_password)
+            instance.save()
 
         return instance
 
@@ -176,6 +191,12 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         items_data = validated_data.pop("items")
+        for item in items_data:
+            if item["product"].stock_quantity < item["quantity"]:
+                raise serializers.ValidationError(
+                    f"Not enough stock for {item['product'].product_name}."
+                )
+
         total = sum(
             item["product"].product_price * item["quantity"]
             for item in items_data
@@ -185,6 +206,9 @@ class OrderSerializer(serializers.ModelSerializer):
         for item in items_data:
             # price is already set by OrderItemSerializer.validate()
             OrderItem.objects.create(order=order, **item)
+            product = item["product"]
+            product.stock_quantity -= item["quantity"]
+            product.save()
         return order
 
 

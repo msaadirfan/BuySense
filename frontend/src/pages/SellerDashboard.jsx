@@ -206,11 +206,11 @@ export default function SellerDashboard() {
   }, [navigate])
 
   const NAV = [
-    { id: "overview", icon: "📊", label: "Overview" },
-    { id: "analytics", icon: "📈", label: "Analytics" },
-    { id: "inventory", icon: "🏆", label: "Inventory Performance" },
-    { id: "products", icon: "📦", label: "My Products", onClick: () => navigate("/seller/products") },
-    { id: "orders", icon: "🧾", label: "Orders", onClick: () => navigate("/seller/orders") },
+    { id: "overview", icon: "", label: "Overview" },
+    { id: "analytics", icon: "", label: "Analytics" },
+    { id: "inventory", icon: "", label: "Inventory Performance" },
+    { id: "products", icon: "", label: "My Products", onClick: () => navigate("/seller/products") },
+    { id: "orders", icon: "", label: "Orders", onClick: () => navigate("/seller/orders") },
   ]
 
   if (loading) return (
@@ -254,7 +254,7 @@ export default function SellerDashboard() {
           </div>
           <div className="dash-sidebar-section" style={{ marginTop: 16, borderTop: '1px solid var(--border)', paddingTop: 16 }}>
             <div className="dash-sidebar-label">Quick Links</div>
-            <Link to="/" className="dash-nav-item"><span className="dash-nav-icon">🛍️</span>Shop Front</Link>
+            <Link to="/" className="dash-nav-item"><span className="dash-nav-icon"></span>Shop Front</Link>
           </div>
         </aside>
 
@@ -268,10 +268,10 @@ export default function SellerDashboard() {
             </div>
 
             <div className="stats-grid" style={{ marginBottom: '24px' }}>
-              <MiniStat icon="💰" label="Total Revenue" value={`PKR ${Number(summary.total_revenue||0).toLocaleString()}`} sub="All time net revenue" color="accent" />
-              <MiniStat icon="🧾" label="Total Orders" value={summary.total_orders||0} sub="Completed & pending" color="blue" />
-              <MiniStat icon="👥" label="Total Customers" value={cs.total || 0} sub="Unique buyers" color="green" />
-              <MiniStat icon="💵" label="Avg Order Value" value={`PKR ${Number(summary.avg_order_value||0).toLocaleString()}`} sub="Per transaction" color="accent" />
+              <MiniStat icon="" label="Total Revenue" value={`PKR ${Number(summary.total_revenue||0).toLocaleString()}`} sub="All time net revenue" color="accent" />
+              <MiniStat icon="" label="Total Orders" value={summary.total_orders||0} sub="Completed & pending" color="blue" />
+              <MiniStat icon="" label="Total Customers" value={cs.total || 0} sub="Unique buyers" color="green" />
+              <MiniStat icon="" label="Avg Order Value" value={`PKR ${Number(summary.avg_order_value||0).toLocaleString()}`} sub="Per transaction" color="accent" />
             </div>
 
             {/* Growth indicators */}
@@ -293,7 +293,7 @@ export default function SellerDashboard() {
             <div className="charts-grid">
               {/* Monthly trend (Area Chart) */}
               <div className="chart-card" style={{ gridColumn: '1 / -1' }}>
-                <div className="chart-card-title"><span>📈</span> Revenue Trend</div>
+                <div className="chart-card-title"><span></span> Revenue Trend</div>
                 <div style={{ width: '100%', height: 300 }}>
                   <ResponsiveContainer>
                     <AreaChart data={monthly_trend} margin={{ top: 10, right: 30, left: 20, bottom: 0 }}>
@@ -315,7 +315,7 @@ export default function SellerDashboard() {
 
               {/* City Revenue (Bar Chart) */}
               <div className="chart-card">
-                <div className="chart-card-title"><span>🗺️</span> Revenue by City</div>
+                <div className="chart-card-title"><span></span> Revenue by City</div>
                 <div style={{ width: '100%', height: 250 }}>
                   <ResponsiveContainer>
                     <BarChart data={cityData.slice(0, 5)} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
@@ -331,7 +331,7 @@ export default function SellerDashboard() {
 
               {/* Category Breakdown (Pie Chart) */}
               <div className="chart-card">
-                <div className="chart-card-title"><span>🥧</span> Category Breakdown</div>
+                <div className="chart-card-title"><span></span> Category Breakdown</div>
                 <div style={{ width: '100%', height: 250 }}>
                   <ResponsiveContainer>
                     <PieChart>
@@ -367,7 +367,7 @@ export default function SellerDashboard() {
             <div className="charts-grid">
               {/* Order Volume */}
               <div className="chart-card full-width">
-                <div className="chart-card-title"><span>📦</span> Order Volume Trend</div>
+                <div className="chart-card-title"><span></span> Order Volume Trend</div>
                 <div style={{ width: '100%', height: 250 }}>
                   <ResponsiveContainer>
                     <BarChart data={monthly_trend} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
@@ -383,7 +383,7 @@ export default function SellerDashboard() {
 
               {/* Order Status Distribution */}
               <div className="chart-card">
-                <div className="chart-card-title"><span>📊</span> Order Status Distribution</div>
+                <div className="chart-card-title"><span></span> Order Status Distribution</div>
                 <div style={{ width: '100%', height: 250 }}>
                   <ResponsiveContainer>
                     <PieChart>
@@ -402,7 +402,7 @@ export default function SellerDashboard() {
 
               {/* Status Revenue */}
               <div className="chart-card">
-                <div className="chart-card-title"><span>💰</span> Revenue by Status</div>
+                <div className="chart-card-title"><span></span> Revenue by Status</div>
                 {statusData.length === 0 ? <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>No data</div> : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
                     {statusData.map((s, i) => {
@@ -430,7 +430,7 @@ export default function SellerDashboard() {
               {/* Rating trend */}
               {customerData?.rating_trend?.length > 0 && (
                 <div className="chart-card full-width">
-                  <div className="chart-card-title"><span>⭐</span> Average Rating Trend</div>
+                  <div className="chart-card-title"><span></span> Average Rating Trend</div>
                   <div style={{ width: '100%', height: 250 }}>
                     <ResponsiveContainer>
                       <AreaChart data={customerData.rating_trend} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
@@ -462,7 +462,7 @@ export default function SellerDashboard() {
 
             <div className="chart-card" style={{ padding: '0', overflow: 'hidden' }}>
               <div className="chart-card-title" style={{ padding: '24px 24px 16px 24px', margin: 0, borderBottom: '1px solid var(--border)' }}>
-                <span>🏆</span> Comprehensive Product Metrics
+                <span></span> Comprehensive Product Metrics
               </div>
               <div style={{ padding: '0 24px 24px 24px' }}>
                 <ProductPerformanceTable data={allProductsData} />

@@ -27,8 +27,8 @@ function ProductCard({ product, onAddToCart }) {
         {product.product_image
           ? <img src={product.product_image} alt={product.product_name} />
           : <span className="product-img-placeholder">
-              {CATEGORY_ICONS[product.category?.category_name] || '📦'}
-            </span>
+            {CATEGORY_ICONS[product.category?.category_name] || '📦'}
+          </span>
         }
       </div>
       <div className="product-info">
@@ -53,13 +53,13 @@ function ProductCard({ product, onAddToCart }) {
 }
 
 export default function SellerProfile() {
-  const { id }                    = useParams()
-  const navigate                  = useNavigate()
-  const [seller, setSeller]       = useState(null)
-  const [products, setProducts]   = useState([])
-  const [loading, setLoading]     = useState(true)
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [seller, setSeller] = useState(null)
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
   const [cartCount, setCartCount] = useState(0)
-  const [toast, setToast]         = useState(null)
+  const [toast, setToast] = useState(null)
 
   function showToast(message, type = 'success') {
     setToast({ message, type })
@@ -185,7 +185,7 @@ export default function SellerProfile() {
               </h1>
               {seller?.address && (
                 <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>
-                  📍 {seller.address}
+                  {seller.address}
                 </div>
               )}
               <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>

@@ -5,20 +5,20 @@ import Navbar from '../components/Navbar'
 import './main.css'
 
 const PAYMENT_LABELS = {
-  COD:  '💵 Cash on Delivery',
+  COD: '💵 Cash on Delivery',
   BANK: '🏦 Bank Transfer',
   EASYP: '📱 Easypaisa',
 }
 
 export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState([])
-  const [loading, setLoading]     = useState(true)
-  const [placing, setPlacing]     = useState(false)
-  const [toast, setToast]         = useState(null)
-  const navigate                  = useNavigate()
+  const [loading, setLoading] = useState(true)
+  const [placing, setPlacing] = useState(false)
+  const [toast, setToast] = useState(null)
+  const navigate = useNavigate()
 
   const [form, setForm] = useState({
-    address:       '',
+    address: '',
     payment_method: 'COD',
   })
 
@@ -57,7 +57,7 @@ export default function CheckoutPage() {
       // Build order items from cart
       const items = cartItems.map(i => ({
         product_id: i.product.id,
-        quantity:   i.quantity,
+        quantity: i.quantity,
       }))
 
       // Place order
@@ -69,7 +69,7 @@ export default function CheckoutPage() {
       // Record payment
       await api.post('/api/payments/', {
         order_id: orderRes.data.id,
-        method:   form.payment_method,
+        method: form.payment_method,
       })
 
       // Clear cart after successful order
@@ -103,18 +103,18 @@ export default function CheckoutPage() {
         <div style={{ maxWidth: '960px', margin: '0 auto', padding: '32px 24px' }}>
 
           <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '28px' }}>
-            ⚡ Checkout
+            Checkout
           </h1>
 
           <form onSubmit={handlePlaceOrder}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '24px', alignItems: 'start' }}>
+            <div className="responsive-checkout-grid">
 
               {/* Left: Delivery + Payment */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
                 {/* Delivery address */}
                 <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '20px' }}>
-                  <h3 style={{ fontSize: '15px', fontWeight: 600, marginBottom: '16px' }}>📍 Delivery Address</h3>
+                  <h3 style={{ fontSize: '15px', fontWeight: 600, marginBottom: '16px' }}> Delivery Address</h3>
                   <div className="field-group">
                     <label>Full delivery address</label>
                     <textarea
@@ -135,7 +135,7 @@ export default function CheckoutPage() {
 
                 {/* Payment method */}
                 <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '20px' }}>
-                  <h3 style={{ fontSize: '15px', fontWeight: 600, marginBottom: '16px' }}>💳 Payment Method</h3>
+                  <h3 style={{ fontSize: '15px', fontWeight: 600, marginBottom: '16px' }}>Payment Method</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {Object.entries(PAYMENT_LABELS).map(([key, label]) => (
                       <label
@@ -166,7 +166,7 @@ export default function CheckoutPage() {
 
                 {/* Order items preview */}
                 <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '20px' }}>
-                  <h3 style={{ fontSize: '15px', fontWeight: 600, marginBottom: '14px' }}>🧾 Order Items ({cartItems.length})</h3>
+                  <h3 style={{ fontSize: '15px', fontWeight: 600, marginBottom: '14px' }}>Order Items ({cartItems.length})</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {cartItems.map(item => (
                       <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
@@ -222,7 +222,7 @@ export default function CheckoutPage() {
                     cursor: placing ? 'not-allowed' : 'pointer', transition: 'background 0.2s',
                   }}
                 >
-                  {placing ? 'Placing Order...' : '✅ Place Order'}
+                  {placing ? 'Placing Order...' : 'Place Order'}
                 </button>
 
                 <Link to="/cart" style={{ display: 'block', textAlign: 'center', marginTop: '12px', fontSize: '13px', color: 'var(--text-muted)', textDecoration: 'none' }}>
@@ -236,7 +236,7 @@ export default function CheckoutPage() {
 
       {toast && (
         <div className={`toast ${toast.type}`}>
-          {toast.type === 'success' ? '✅' : '❌'} {toast.message}
+          {toast.message}
         </div>
       )}
     </div>

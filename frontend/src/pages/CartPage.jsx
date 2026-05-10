@@ -121,16 +121,14 @@ export default function CartPage() {
               </Link>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '24px', alignItems: 'start' }}>
+            <div className="responsive-cart-grid">
 
               {/* Items list */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {items.map(item => (
-                  <div key={item.id} style={{
+                  <div key={item.id} className="responsive-cart-item" style={{
                     background: 'var(--bg-elevated)', border: '1px solid var(--border)',
                     borderRadius: 'var(--radius)', padding: '16px',
-                    display: 'grid', gridTemplateColumns: '72px 1fr auto',
-                    gap: '16px', alignItems: 'center',
                   }}>
                     {/* Thumbnail */}
                     <div

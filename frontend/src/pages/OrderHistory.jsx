@@ -98,7 +98,6 @@ export function OrderDetail() {
                   onClick={() => navigate(`/products/${item.product?.id}`)}
                   style={{ width: '52px', height: '52px', background: 'var(--bg-card)', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', cursor: 'pointer', flexShrink: 0 }}
                 >
-                  📦
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.product?.product_name}</div>
@@ -131,7 +130,7 @@ export function OrderDetail() {
 
           <div style={{ display: 'flex', gap: '12px' }}>
             <Link to="/orders" style={{ padding: '10px 20px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', color: 'var(--text-soft)', fontSize: '13px', textDecoration: 'none', fontWeight: 500 }}>
-              ← All Orders
+              All Orders
             </Link>
             <Link to="/" style={{ padding: '10px 20px', background: 'var(--accent)', border: 'none', borderRadius: 'var(--radius-sm)', color: '#fff', fontSize: '13px', textDecoration: 'none', fontWeight: 600 }}>
               Continue Shopping
@@ -173,11 +172,11 @@ export default function OrderHistory() {
       <div style={{ paddingTop: 'var(--navbar-h)', flex: 1 }}>
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 24px' }}>
 
-          <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '28px' }}>📦 My Orders</h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '28px' }}>My Orders</h1>
 
           {orders.length === 0 ? (
             <div className="empty-state" style={{ paddingTop: '80px' }}>
-              <div className="empty-state-icon">📦</div>
+              <div className="empty-state-icon"></div>
               <h3>No orders yet</h3>
               <p>When you place an order it will appear here</p>
               <Link to="/" style={{ display: 'inline-block', marginTop: '20px', padding: '10px 24px', background: 'var(--accent)', color: '#fff', borderRadius: 'var(--radius-sm)', textDecoration: 'none', fontWeight: 600, fontSize: '14px' }}>

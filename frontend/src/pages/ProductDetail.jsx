@@ -144,7 +144,7 @@ export default function ProductDetail() {
           </button>
 
           {/* Product main */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', marginBottom: '48px' }}>
+          <div className="responsive-grid-2col">
 
             {/* Image */}
             <div style={{
@@ -207,8 +207,8 @@ export default function ProductDetail() {
               {/* Stock */}
               <div style={{ fontSize: '13px', color: product.stock_quantity > 0 ? 'var(--green)' : 'var(--red)' }}>
                 {product.stock_quantity > 0
-                  ? `✓ In Stock (${product.stock_quantity} available)`
-                  : '✗ Out of Stock'
+                  ? `In Stock (${product.stock_quantity} available)`
+                  : 'Out of Stock'
                 }
               </div>
 
@@ -242,7 +242,7 @@ export default function ProductDetail() {
                         opacity: addingCart ? 0.6 : 1, transition: 'all 0.2s',
                       }}
                     >
-                      {addingCart ? 'Adding...' : '🛒 Add to Cart'}
+                      {addingCart ? 'Adding...' : 'Add to Cart'}
                     </button>
                     <button
                       onClick={handleBuyNow}
@@ -255,7 +255,7 @@ export default function ProductDetail() {
                         opacity: addingCart ? 0.6 : 1, transition: 'all 0.2s',
                       }}
                     >
-                      ⚡ Buy Now
+                      Buy Now
                     </button>
                   </div>
                 </>
@@ -310,7 +310,7 @@ export default function ProductDetail() {
             {/* Review list */}
             {reviews.length === 0 ? (
               <div className="empty-state">
-                <div className="empty-state-icon">💬</div>
+                <div className="empty-state-icon"></div>
                 <h3>No reviews yet</h3>
                 <p>Be the first to review this product</p>
               </div>
@@ -355,7 +355,7 @@ export default function ProductDetail() {
 
       {toast && (
         <div className={`toast ${toast.type}`}>
-          {toast.type === 'success' ? '✅' : '❌'} {toast.message}
+          {toast.message}
         </div>
       )}
     </div>

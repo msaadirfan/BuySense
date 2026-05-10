@@ -71,7 +71,7 @@ export default function Navbar({ onSearch, cartCount = 0 }) {
           value={searchVal}
           onChange={e => setSearchVal(e.target.value)}
         />
-        <span className="navbar-search-icon">🔍</span>
+        <span className="navbar-search-icon"></span>
       </form>
 
       {/* Actions */}
@@ -81,24 +81,22 @@ export default function Navbar({ onSearch, cartCount = 0 }) {
         {isSeller && (
           <>
             <Link to="/" className={`nav-btn ${!isDashboard ? 'active' : ''}`}>
-              🛍️ Shop
+              Shop
             </Link>
             <Link to="/seller/dashboard" className={`nav-btn seller-btn ${isDashboard ? 'active' : ''}`}>
-              📊 Dashboard
+              Dashboard
             </Link>
           </>
         )}
 
         {/* Cart */}
         <Link to="/cart" className="nav-btn cart-btn">
-          <span className="nav-btn-icon">🛒</span>
-          <span className="sr-only">Cart</span>
+          <span>Cart</span>
           {cartCount > 0 && <span className="cart-badge">{cartCount > 99 ? '99+' : cartCount}</span>}
         </Link>
 
         {/* Orders */}
         <Link to="/orders" className="nav-btn">
-          <span className="nav-btn-icon">📦</span>
           <span>Orders</span>
         </Link>
 
@@ -116,18 +114,18 @@ export default function Navbar({ onSearch, cartCount = 0 }) {
               </div>
 
               <Link to="/profile" className="dropdown-item" onClick={() => setDropdown(false)}>
-                👤 My Profile
+                My Profile
               </Link>
               <Link to="/orders" className="dropdown-item" onClick={() => setDropdown(false)}>
-                📦 My Orders
+                My Orders
               </Link>
               {isSeller && (
                 <Link to="/seller/products" className="dropdown-item" onClick={() => setDropdown(false)}>
-                  📦 My Products
+                  My Products
                 </Link>
               )}
               <button className="dropdown-item danger" onClick={handleLogout}>
-                🚪 Sign Out
+                Sign Out
               </button>
             </div>
           )}

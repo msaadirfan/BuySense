@@ -83,7 +83,7 @@ function ProductModal({ product, categories, onClose, onSaved }) {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <h2 style={{ fontSize: '18px', fontWeight: 700 }}>
-            {isEdit ? '✏️ Edit Product' : '➕ Add Product'}
+            {isEdit ? 'Edit Product' : 'Add Product'}
           </h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '20px' }}>✕</button>
         </div>
@@ -109,7 +109,7 @@ function ProductModal({ product, categories, onClose, onSaved }) {
             />
           </div>
 
-          <div className="form-row">
+          <div className="responsive-grid-2col" style={{ gap: '14px', marginBottom: 0 }}>
             <div className="field-group">
               <label>Price (PKR)</label>
               <input name="product_price" type="number" min="0" step="0.01" value={form.product_price} onChange={handleChange} placeholder="0.00" required />
@@ -230,9 +230,9 @@ export default function SellerProducts() {
       <div style={{ paddingTop: 'var(--navbar-h)', flex: 1 }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '32px 24px' }}>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
+          <div className="responsive-flex-header" style={{ marginBottom: '28px' }}>
             <div>
-              <h1 style={{ fontSize: '24px', fontWeight: 700 }}>📦 My Products</h1>
+              <h1 style={{ fontSize: '24px', fontWeight: 700 }}>My Products</h1>
               <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
                 {products.length} product{products.length !== 1 ? 's' : ''} listed
               </div>
@@ -241,13 +241,13 @@ export default function SellerProducts() {
               onClick={() => setModal('add')}
               style={{ padding: '10px 20px', background: 'var(--accent)', border: 'none', borderRadius: 'var(--radius-sm)', color: '#fff', fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
             >
-              ➕ Add Product
+              Add Product
             </button>
           </div>
 
           {products.length === 0 ? (
             <div className="empty-state" style={{ paddingTop: '80px' }}>
-              <div className="empty-state-icon">📦</div>
+              <div className="empty-state-icon"></div>
               <h3>No products yet</h3>
               <p>Add your first product to start selling</p>
               <button
@@ -259,8 +259,9 @@ export default function SellerProducts() {
             </div>
           ) : (
             <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
-              <table className="data-table" style={{ fontSize: '14px' }}>
-                <thead>
+              <div style={{ overflowX: 'auto' }}>
+                <table className="data-table" style={{ fontSize: '14px', width: '100%', minWidth: '600px' }}>
+                  <thead>
                   <tr>
                     <th>Product</th>
                     <th>Category</th>
@@ -295,21 +296,22 @@ export default function SellerProducts() {
                             onClick={() => setModal(product)}
                             style={{ padding: '6px 12px', background: 'var(--blue-dim)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 'var(--radius-sm)', color: 'var(--blue)', fontSize: '12px', cursor: 'pointer', fontFamily: 'Outfit, sans-serif' }}
                           >
-                            ✏️ Edit
+                            Edit
                           </button>
                           <button
                             onClick={() => handleDelete(product)}
                             disabled={deleting === product.id}
                             style={{ padding: '6px 12px', background: 'var(--red-dim)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 'var(--radius-sm)', color: 'var(--red)', fontSize: '12px', cursor: deleting === product.id ? 'not-allowed' : 'pointer', fontFamily: 'Outfit, sans-serif', opacity: deleting === product.id ? 0.5 : 1 }}
                           >
-                            {deleting === product.id ? '...' : '🗑 Delete'}
+                            {deleting === product.id ? '...' : 'Delete'}
                           </button>
                         </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
-              </table>
+                </table>
+              </div>
             </div>
           )}
         </div>
@@ -327,7 +329,7 @@ export default function SellerProducts() {
 
       {toast && (
         <div className={`toast ${toast.type}`}>
-          {toast.type === 'success' ? '✅' : '❌'} {toast.message}
+          {toast.message}
         </div>
       )}
     </div>
