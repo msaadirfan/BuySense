@@ -143,7 +143,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 CORS_ALLOW_ALL_ORIGINS=True
 CORS_ALLOW_CREDENTIALS=True
 
-AUTH_USER_MODEL = 'buysense.User' 
+AUTH_USER_MODEL = 'buysense.User'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -21,6 +21,31 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
 
 
+class UserUpdateSerializer(serializers.ModelSerializer):
+    phone = serializers.CharField(write_only=True, required=False)
+
+    class Meta:
+        model  = User
+        fields = ["first_name", "last_name", "email", "country", "city", "phone"]
+
+    def update(self, instance, validated_data):
+        phone = validated_data.pop("phone", None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # Update customer phone if provided
+        if phone is not None:
+            try:
+                customer = instance.customer
+                customer.phone = phone
+                customer.save()
+            except Customer.DoesNotExist:
+                pass
+
+        return instance
+
+
 # ── Profiles ─────────────────────────────────────────────────────
 
 class CustomerSerializer(serializers.ModelSerializer):

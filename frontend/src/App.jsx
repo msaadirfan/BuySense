@@ -13,6 +13,7 @@ import OrderHistory,
 import SellerProducts  from './pages/SellerProducts'
 import SellerOrders    from './pages/SellerOrders'
 import SellerProfile  from './pages/SellerProfile'
+import UserProfile    from './pages/UserProfile'
 import ProtectedRoute  from './components/ProtectedRoute'
 import api             from './api'
 
@@ -54,6 +55,9 @@ function App() {
         <Route path="/seller/dashboard" element={<ProtectedRoute><SellerDashboard /></ProtectedRoute>} />
         <Route path="/seller/products"  element={<ProtectedRoute><SellerProducts /></ProtectedRoute>} />
         <Route path="/seller/orders"    element={<ProtectedRoute><SellerOrders /></ProtectedRoute>} />
+
+        {/* ── User Profile ── */}
+        <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
 
         {/* ── Fallback ── */}
         <Route path="*" element={<Navigate to="/" replace />} />

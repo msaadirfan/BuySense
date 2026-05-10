@@ -5,10 +5,10 @@ import Navbar from '../components/Navbar'
 import './main.css'
 
 const STATUS_COLORS = {
-  PENDING:   { bg: 'rgba(59,130,246,0.12)', color: '#3b82f6' },
-  SHIPPED:   { bg: 'rgba(249,115,22,0.12)', color: '#f97316' },
-  DELIVERED: { bg: 'rgba(34,197,94,0.12)',  color: '#22c55e' },
-  CANCELLED: { bg: 'rgba(239,68,68,0.1)',   color: '#ef4444' },
+  PENDING: { bg: 'rgba(59,130,246,0.12)', color: '#3b82f6' },
+  SHIPPED: { bg: 'rgba(249,115,22,0.12)', color: '#f97316' },
+  DELIVERED: { bg: 'rgba(34,197,94,0.12)', color: '#22c55e' },
+  CANCELLED: { bg: 'rgba(239,68,68,0.1)', color: '#ef4444' },
 }
 
 function StatusBadge({ status }) {
@@ -26,12 +26,12 @@ function StatusBadge({ status }) {
 
 // ── Order Detail ───────────────────────────────────────────────
 export function OrderDetail() {
-  const { id }           = useParams()
-  const [searchParams]   = useSearchParams()
-  const isSuccess        = searchParams.get('success') === '1'
+  const { id } = useParams()
+  const [searchParams] = useSearchParams()
+  const isSuccess = searchParams.get('success') === '1'
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(true)
-  const navigate         = useNavigate()
+  const navigate = useNavigate()
 
   useEffect(() => {
     let cancelled = false
@@ -66,7 +66,7 @@ export function OrderDetail() {
               borderRadius: 'var(--radius)', padding: '16px 20px', marginBottom: '24px',
               display: 'flex', alignItems: 'center', gap: '12px',
             }}>
-              <span style={{ fontSize: '24px' }}>🎉</span>
+              <span style={{ fontSize: '24px' }}></span>
               <div>
                 <div style={{ fontWeight: 600, color: 'var(--green)', marginBottom: '2px' }}>Order placed successfully!</div>
                 <div style={{ fontSize: '13px', color: 'var(--text-soft)' }}>Your order #{order.id} has been confirmed.</div>
@@ -145,9 +145,9 @@ export function OrderDetail() {
 
 // ── Order History ──────────────────────────────────────────────
 export default function OrderHistory() {
-  const [orders, setOrders]   = useState([])
+  const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
-  const navigate              = useNavigate()
+  const navigate = useNavigate()
 
   useEffect(() => {
     let cancelled = false

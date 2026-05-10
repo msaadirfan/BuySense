@@ -16,12 +16,14 @@ from buysense.views import (
     CartListCreateView, CartItemDetailView, CartClearView, CartSummaryView,
     # Orders
     OrderListCreateView, OrderDetailView, OrderStatusUpdateView,
+    SellerOrdersListView,
     # Payments
     PaymentCreateView, PaymentDetailView,
     # Analytics
     AnalyticsSalesTrendView, AnalyticsTopProductsView,
     AnalyticsRevenueByCityView, AnalyticsCategoryPerformanceView,
-    AnalyticsSellerDashboardView,
+    AnalyticsSellerDashboardView, AnalyticsCustomerInsightsView,
+    AnalyticsOrderStatusView,
 )
 
 urlpatterns = [
@@ -57,6 +59,7 @@ urlpatterns = [
     # ── Orders ────────────────────────────────────────────────────
     path('api/orders/',              OrderListCreateView.as_view(),  name='orders'),
     path('api/orders/<int:pk>/',     OrderDetailView.as_view(),      name='order_detail'),
+    path('api/seller/orders/',       SellerOrdersListView.as_view(), name='seller_orders'),
     path('api/seller/orders/<int:pk>/status/', OrderStatusUpdateView.as_view(), name='order_status'),
 
     # ── Payments ──────────────────────────────────────────────────
@@ -69,5 +72,7 @@ urlpatterns = [
     path('api/analytics/revenue-by-city/',      AnalyticsRevenueByCityView.as_view(),       name='analytics_city'),
     path('api/analytics/category-performance/', AnalyticsCategoryPerformanceView.as_view(), name='analytics_category'),
     path('api/analytics/seller-dashboard/',     AnalyticsSellerDashboardView.as_view(),     name='analytics_seller'),
+    path('api/analytics/customer-insights/',    AnalyticsCustomerInsightsView.as_view(),    name='analytics_customers'),
+    path('api/analytics/order-status/',         AnalyticsOrderStatusView.as_view(),         name='analytics_order_status'),
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -12,7 +12,7 @@ from .models import (
     CartItem, Order, OrderItem, Payment, Review, OrderStatus
 )
 from .serializers import (
-    UserSerializer, CustomerSerializer, SellerSerializer,
+    UserSerializer, UserUpdateSerializer, CustomerSerializer, SellerSerializer,
     CategorySerializer, ProductSerializer, ReviewSerializer,
     CartItemSerializer, OrderSerializer, OrderStatusUpdateSerializer,
     PaymentSerializer
@@ -68,7 +68,8 @@ class CreateSellerView(generics.CreateAPIView):
 # ── Me (current user profile) ────────────────────────────────────
 
 class MeView(APIView):
-    """GET /api/me/ — returns current user + role flags"""
+    """GET /api/me/ — returns current user + role flags + stats
+       PATCH /api/me/ — update profile fields"""
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -76,7 +77,35 @@ class MeView(APIView):
         data = UserSerializer(user).data
         data['is_customer'] = Customer.objects.filter(user=user).exists()
         data['is_seller']   = Seller.objects.filter(user=user).exists()
+
+        # Include phone from customer profile
+        try:
+            data['phone'] = user.customer.phone
+        except Customer.DoesNotExist:
+            data['phone'] = ''
+
+        # Customer stats
+        try:
+            customer = Customer.objects.get(user=user)
+            orders = Order.objects.filter(customer=customer)
+            data['total_orders'] = orders.count()
+            data['total_spent'] = float(
+                orders.exclude(status=OrderStatus.CANCELLED)
+                      .aggregate(total=Sum('total_amount'))['total'] or 0
+            )
+        except Customer.DoesNotExist:
+            data['total_orders'] = 0
+            data['total_spent'] = 0
+
         return Response(data)
+
+    def patch(self, request):
+        serializer = UserUpdateSerializer(
+            request.user, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return self.get(request)
 
 
 # ── Categories ───────────────────────────────────────────────────
@@ -293,6 +322,22 @@ class OrderStatusUpdateView(generics.UpdateAPIView):
         return Order.objects.filter(items__product__seller=seller).distinct()
 
 
+class SellerOrdersListView(generics.ListAPIView):
+    """GET /api/seller/orders/ — orders containing this seller's products"""
+    serializer_class   = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        seller = get_seller(self.request.user)
+        return (
+            Order.objects
+            .filter(items__product__seller=seller)
+            .distinct()
+            .prefetch_related('items__product')
+            .order_by('-created_at')
+        )
+
+
 # ── Payments ─────────────────────────────────────────────────────
 
 class PaymentCreateView(generics.CreateAPIView):
@@ -363,21 +408,22 @@ class AnalyticsSalesTrendView(APIView):
 
 
 class AnalyticsTopProductsView(APIView):
-    """GET /api/analytics/top-products/?limit=10"""
+    """GET /api/analytics/top-products/ (now returns all products for frontend sorting)"""
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        get_seller(request.user)
-        limit = int(request.query_params.get('limit', 10))
+        seller = get_seller(request.user)
 
+        # Get ALL products and their performance
         data = (
             OrderItem.objects
+            .filter(product__seller=seller)
             .values('product__id', 'product__product_name', 'product__category__category_name')
             .annotate(
                 units_sold=Sum('quantity'),
                 revenue=Sum(F('quantity') * F('price'))
             )
-            .order_by('-units_sold')[:limit]
+            .order_by('-units_sold')
         )
 
         return Response([{
@@ -486,12 +532,22 @@ class AnalyticsSellerDashboardView(APIView):
             .order_by('month')
         )
 
+        # Average order value
+        avg_order = (
+            Order.objects
+            .filter(items__product__seller=seller)
+            .exclude(status=OrderStatus.CANCELLED)
+            .distinct()
+            .aggregate(avg=Avg('total_amount'))['avg']
+        ) or 0
+
         return Response({
             'summary': {
                 'total_revenue':   float(total_revenue),
                 'total_orders':    total_orders,
                 'total_products':  total_products,
                 'low_stock_count': low_stock,
+                'avg_order_value': round(float(avg_order), 2),
             },
             'top_products': [{
                 'name':    p['product__product_name'],
@@ -504,3 +560,180 @@ class AnalyticsSellerDashboardView(APIView):
                 'orders':  m['orders'],
             } for m in monthly],
         })
+
+
+class AnalyticsCustomerInsightsView(APIView):
+    """
+    GET /api/analytics/customer-insights/
+    Deep customer behavior analytics for sellers
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        seller = get_seller(request.user)
+
+        from django.utils import timezone
+        from datetime import timedelta
+        now = timezone.now()
+        thirty_days_ago = now - timedelta(days=30)
+
+        # All orders containing this seller's products
+        seller_orders = (
+            Order.objects
+            .filter(items__product__seller=seller)
+            .exclude(status=OrderStatus.CANCELLED)
+            .distinct()
+        )
+
+        # ── Top Customers ────────────────────────────────────
+        top_customers = (
+            seller_orders
+            .values(
+                'customer__user__first_name',
+                'customer__user__last_name',
+                'customer__user__username',
+                'customer__user__city',
+            )
+            .annotate(
+                order_count=Count('id'),
+                total_spent=Sum('total_amount'),
+            )
+            .order_by('-total_spent')[:10]
+        )
+
+        # ── Repeat vs One-Time Customers ─────────────────────
+        customer_order_counts = (
+            seller_orders
+            .values('customer')
+            .annotate(cnt=Count('id'))
+        )
+        total_customers = customer_order_counts.count()
+        repeat_customers = customer_order_counts.filter(cnt__gt=1).count()
+        one_time = total_customers - repeat_customers
+
+        # ── Orders by Time of Day (hour buckets) ─────────────
+        from django.db.models.functions import ExtractHour
+        hourly = (
+            seller_orders
+            .annotate(hour=ExtractHour('created_at'))
+            .values('hour')
+            .annotate(count=Count('id'))
+            .order_by('hour')
+        )
+
+        # ── Orders by Day of Week ────────────────────────────
+        from django.db.models.functions import ExtractWeekDay
+        daily = (
+            seller_orders
+            .annotate(dow=ExtractWeekDay('created_at'))
+            .values('dow')
+            .annotate(count=Count('id'))
+            .order_by('dow')
+        )
+        day_names = {1: 'Sun', 2: 'Mon', 3: 'Tue', 4: 'Wed',
+                     5: 'Thu', 6: 'Fri', 7: 'Sat'}
+
+        # ── Recent 30-day metrics ────────────────────────────
+        recent_orders = seller_orders.filter(created_at__gte=thirty_days_ago)
+        recent_count = recent_orders.count()
+        recent_revenue = float(
+            recent_orders.aggregate(rev=Sum('total_amount'))['rev'] or 0
+        )
+
+        # Previous 30 days for comparison
+        sixty_days_ago = now - timedelta(days=60)
+        prev_orders = seller_orders.filter(
+            created_at__gte=sixty_days_ago,
+            created_at__lt=thirty_days_ago,
+        )
+        prev_count = prev_orders.count()
+        prev_revenue = float(
+            prev_orders.aggregate(rev=Sum('total_amount'))['rev'] or 0
+        )
+
+        order_growth = (
+            ((recent_count - prev_count) / prev_count * 100)
+            if prev_count > 0 else 0
+        )
+        revenue_growth = (
+            ((recent_revenue - prev_revenue) / prev_revenue * 100)
+            if prev_revenue > 0 else 0
+        )
+
+        # ── Average Rating Trend (monthly) ───────────────────
+        rating_trend = (
+            Review.objects
+            .filter(product__seller=seller)
+            .annotate(month=TruncMonth('created_at'))
+            .values('month')
+            .annotate(
+                avg_rating=Avg('rating'),
+                review_count=Count('id'),
+            )
+            .order_by('month')
+        )
+
+        return Response({
+            'top_customers': [{
+                'name': f"{c['customer__user__first_name']} {c['customer__user__last_name']}".strip()
+                        or c['customer__user__username'],
+                'city':        c['customer__user__city'],
+                'orders':      c['order_count'],
+                'total_spent': float(c['total_spent']),
+            } for c in top_customers],
+
+            'customer_segments': {
+                'total':    total_customers,
+                'repeat':   repeat_customers,
+                'one_time': one_time,
+            },
+
+            'hourly_distribution': [{
+                'hour':  h['hour'],
+                'count': h['count'],
+            } for h in hourly],
+
+            'daily_distribution': [{
+                'day':   day_names.get(d['dow'], '?'),
+                'count': d['count'],
+            } for d in daily],
+
+            'growth': {
+                'recent_orders':   recent_count,
+                'recent_revenue':  recent_revenue,
+                'order_growth':    round(order_growth, 1),
+                'revenue_growth':  round(revenue_growth, 1),
+            },
+
+            'rating_trend': [{
+                'month':        r['month'].strftime('%Y-%m'),
+                'avg_rating':   round(float(r['avg_rating']), 2),
+                'review_count': r['review_count'],
+            } for r in rating_trend],
+        })
+
+
+class AnalyticsOrderStatusView(APIView):
+    """GET /api/analytics/order-status/ — order status distribution"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        seller = get_seller(request.user)
+
+        data = (
+            Order.objects
+            .filter(items__product__seller=seller)
+            .distinct()
+            .values('status')
+            .annotate(
+                count=Count('id'),
+                revenue=Sum('total_amount'),
+            )
+            .order_by('status')
+        )
+
+        return Response([{
+            'status':  d['status'],
+            'count':   d['count'],
+            'revenue': float(d['revenue'] or 0),
+        } for d in data])

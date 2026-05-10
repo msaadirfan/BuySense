@@ -40,7 +40,7 @@ export default function SellerOrders() {
     async function load() {
       try {
         // Fetch all orders that contain this seller's products
-        const res = await api.get('/api/orders/')
+        const res = await api.get('/api/seller/orders/')
         if (!cancelled) setOrders(res.data)
       } catch {
         if (!cancelled) setOrders([])
