@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Auth.css';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const Login = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
-  const [error, setError]       = useState('');
-  const [loading, setLoading]   = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) =>
@@ -19,17 +19,17 @@ const Login = () => {
     setError('');
 
     try {
-      const res  = await fetch(`${API_BASE}/buysense/token/`, {
-        method:  'POST',
+      const res = await fetch(`${API_BASE}/buysense/token/`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(formData),
+        body: JSON.stringify(formData),
       });
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.detail || 'Invalid username or password.');
 
       // Store tokens
-      localStorage.setItem('access',  data.access);
+      localStorage.setItem('access', data.access);
       localStorage.setItem('refresh', data.refresh);
 
       navigate('/home');   // ← adjust route as needed

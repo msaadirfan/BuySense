@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 /* ─────────────────────────────────────────────────────────────
    Initial state helpers
@@ -85,8 +85,8 @@ const Register = () => {
         password: formData.password,
         country: formData.country,
         city: formData.city,
-        first_name:formData.first_name,
-        last_name:formData.last_name,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
       };
 
       const userRes = await fetch(`${API_BASE}/buysense/user/register/`, {
