@@ -21,8 +21,7 @@ from .serializers import (
 User = get_user_model()
 
 
-# ── Helpers ──────────────────────────────────────────────────────
-
+# ── Helpers 
 def get_customer(user):
     try:
         return Customer.objects.get(user=user)
@@ -37,8 +36,7 @@ def get_seller(user):
         raise PermissionDenied("Seller profile required.")
 
 
-# ── Auth ─────────────────────────────────────────────────────────
-
+# ── Auth 
 class CreateUserView(generics.CreateAPIView):
     queryset           = User.objects.all()
     serializer_class   = UserSerializer
@@ -108,7 +106,7 @@ class MeView(APIView):
         return self.get(request)
 
 
-# ── Categories ───────────────────────────────────────────────────
+# ── Categories  ────────────
 
 class CategoryListView(generics.ListAPIView):
     queryset           = Category.objects.all()
@@ -116,7 +114,7 @@ class CategoryListView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
 
-# ── Products (public) ────────────────────────────────────────────
+# ── Products (public)  ─────
 
 class ProductListView(generics.ListAPIView):
     """
@@ -161,7 +159,7 @@ class ProductDetailView(generics.RetrieveAPIView):
     permission_classes = [AllowAny]
 
 
-# ── Products (seller-only) ───────────────────────────────────────
+# ── Products (seller-only)  
 
 class SellerProductListCreateView(generics.ListCreateAPIView):
     """GET/POST /api/seller/products/"""
@@ -185,7 +183,7 @@ class SellerProductDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Product.objects.filter(seller=get_seller(self.request.user))
 
 
-# ── Reviews ──────────────────────────────────────────────────────
+# ── Reviews  
 
 class ProductReviewListCreateView(generics.ListCreateAPIView):
     """GET/POST /api/products/<pk>/reviews/"""
@@ -208,7 +206,7 @@ class ProductReviewListCreateView(generics.ListCreateAPIView):
         serializer.save(product=product, customer=customer)
 
 
-# ── Cart ─────────────────────────────────────────────────────────
+# ── Cart  
 
 class CartListCreateView(generics.ListCreateAPIView):
     """
@@ -281,7 +279,7 @@ class CartSummaryView(APIView):
         })
 
 
-# ── Orders ───────────────────────────────────────────────────────
+# ── Orders 
 
 class OrderListCreateView(generics.ListCreateAPIView):
     """
@@ -338,7 +336,7 @@ class SellerOrdersListView(generics.ListAPIView):
         )
 
 
-# ── Payments ─────────────────────────────────────────────────────
+# ── Payments 
 
 class PaymentCreateView(generics.CreateAPIView):
     """POST /api/payments/ — record payment for an order"""
@@ -366,7 +364,7 @@ class PaymentDetailView(generics.RetrieveAPIView):
         return Payment.objects.filter(order__customer=customer)
 
 
-# ── Analytics (seller) ───────────────────────────────────────────
+# ── Analytics (seller) 
 
 class AnalyticsSalesTrendView(APIView):
     """
@@ -585,7 +583,7 @@ class AnalyticsCustomerInsightsView(APIView):
             .distinct()
         )
 
-        # ── Top Customers ────────────────────────────────────
+        # ── Top Customers 
         top_customers = (
             seller_orders
             .values(
@@ -601,7 +599,7 @@ class AnalyticsCustomerInsightsView(APIView):
             .order_by('-total_spent')[:10]
         )
 
-        # ── Repeat vs One-Time Customers ─────────────────────
+        # ── Repeat vs One-Time Customers 
         customer_order_counts = (
             seller_orders
             .values('customer')
@@ -611,7 +609,7 @@ class AnalyticsCustomerInsightsView(APIView):
         repeat_customers = customer_order_counts.filter(cnt__gt=1).count()
         one_time = total_customers - repeat_customers
 
-        # ── Orders by Time of Day (hour buckets) ─────────────
+        # ── Orders by Time of Day (hour buckets) 
         from django.db.models.functions import ExtractHour
         hourly = (
             seller_orders
@@ -621,7 +619,7 @@ class AnalyticsCustomerInsightsView(APIView):
             .order_by('hour')
         )
 
-        # ── Orders by Day of Week ────────────────────────────
+        # ── Orders by Day of Week 
         from django.db.models.functions import ExtractWeekDay
         daily = (
             seller_orders
@@ -633,7 +631,7 @@ class AnalyticsCustomerInsightsView(APIView):
         day_names = {1: 'Sun', 2: 'Mon', 3: 'Tue', 4: 'Wed',
                      5: 'Thu', 6: 'Fri', 7: 'Sat'}
 
-        # ── Recent 30-day metrics ────────────────────────────
+        # ── Recent 30-day metrics 
         recent_orders = seller_orders.filter(created_at__gte=thirty_days_ago)
         recent_count = recent_orders.count()
         recent_revenue = float(

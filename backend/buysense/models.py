@@ -61,7 +61,7 @@ class Product(models.Model):
         return self.product_name
 
 
-# ── Cart ─────────────────────────────────────────────────────────
+# Cart
 
 class CartItem(models.Model):
     """
@@ -83,7 +83,7 @@ class CartItem(models.Model):
         return f"{self.user.username} — {self.product.product_name} x{self.quantity}"
 
 
-# ── Orders ───────────────────────────────────────────────────────
+# ── Orders 
 
 class OrderStatus(models.TextChoices):
     PENDING   = 'PENDING',   'Pending'
@@ -125,7 +125,7 @@ class OrderItem(models.Model):
         ]
 
 
-# ── Payments ─────────────────────────────────────────────────────
+# ── Payments 
 
 class PaymentMethod(models.TextChoices):
     COD           = 'COD',   'Cash on Delivery'
@@ -149,7 +149,7 @@ class Payment(models.Model):
         ]
 
 
-# ── Reviews ──────────────────────────────────────────────────────
+# ── Reviews 
 
 class Review(models.Model):
     product    = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
