@@ -171,4 +171,3 @@ Order status is restricted to `PENDING / SHIPPED / DELIVERED / CANCELLED` and pa
 - **`TruncMonth` / `TruncDay`** — truncate timestamps at the database level to group orders by month or day for trend charts
 - **`ExtractHour` / `ExtractWeekDay`** — extract hour and day-of-week from timestamps in SQL for the hourly and day-of-week distribution charts
 - **`distinct()`** — applied when joining through `OrderItem` back to `Order` to prevent the same order being counted multiple times
->>>>>>> 5aa7fabf6bae384564e873f8b3e09a88ff3ea5a9
