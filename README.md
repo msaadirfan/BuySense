@@ -1,11 +1,9 @@
-<<<<<<< HEAD
 # BuySense - Data-Driven E-Commerce Platform
 
 BuySense is a full-stack e-commerce application integrated with advanced database management features and a comprehensive seller analytics dashboard. This project fulfills the requirements for both **Web Development** and **Advanced Database Management Systems (ADMS)**.
 
 ## 👥 Group Members
 - **Muhammad Saad Irfan** (Reg No: 508477)
-- *[Add other group members here]*
 
 ---
 
